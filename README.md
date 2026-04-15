@@ -1,2 +1,16 @@
-# Automatiza-o-do-envio-de-desafios-no-princesa-pop
-É um sistema usando flask que desafia automaticmente todas as princesas cujo PA é menor do que a minha
+automatização do lançamento de desafios no p´rincesa pop
+
+COMO USAR:
+python app_ju_right.py
+
+        ou
+
+python app_ju_left.py
+
+        ou
+        
+python app_bea_right.py
+
+        ou
+
+python app_bea_left.
