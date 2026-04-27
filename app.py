@@ -9,8 +9,8 @@ import os
 
 load_dotenv()
 
-email_env = os.getenv("EMAIL_BEA")
-senha_env = os.getenv("SENHA_BEA")
+email_env = os.getenv("EMAIL")
+senha_env = os.getenv("SENHA")
 
 
 def extrair_numero(texto):
