@@ -50,7 +50,7 @@ def verificar_popup(driver):
         if "já enviou um desafio" in texto:
             return "erro"
 
-        elif "sucesso" in texto or "enviado" in texto:
+        elif "lançou um desafio" in texto:
             return "sucesso"
 
         return "outro"
@@ -60,7 +60,7 @@ def verificar_popup(driver):
 
 
 driver = webdriver.Firefox()
-wait = WebDriverWait(driver, 15)
+wait = WebDriverWait(driver, 7)
 
 driver.get("https://www.princesapop.com")
 
@@ -90,10 +90,10 @@ while i < 100:
         print("Erro ao pegar AP, pulando...")
         time.sleep(2)
         continue
-
-    print(valor_stats, valor_span)
+    
 
     if valor_span > valor_stats:
+        print("princesa elegível a desafio, você ganharia.")
         try:
             wait.until(EC.invisibility_of_element_located((By.ID, "notification-center")))
         except:
@@ -105,14 +105,16 @@ while i < 100:
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#btn-challenge-without-stake > .btn"))).click()
         time.sleep(random.uniform(1, 2))
         
-        wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#notification-center p")))
+        
+        try:
+            wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#notification-center p")))
         
         resultado_popup = verificar_popup(driver)
 
         if resultado_popup == "erro":
-            print("Pulando princesa...")
+            print("Já desafiou anteriormente, pulando princesa...")
         elif resultado_popup == "sucesso":
-            print("Desafio enviado com sucesso, passando princesa...")
+            print("Desafio enviado com sucesso, avançando princesa...")
             i += 1
         else:
             print("Popup inesperado")
@@ -122,6 +124,7 @@ while i < 100:
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".left img"))).click()
         
     else:
+        print("Princesa não elegível a desafio, você perderia.")
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".left img"))).click()
         
     time.sleep(random.uniform(2, 5))

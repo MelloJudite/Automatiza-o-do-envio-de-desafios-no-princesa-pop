@@ -12,7 +12,6 @@ load_dotenv()
 email_env = os.getenv("EMAIL_JU")
 senha_env = os.getenv("SENHA_JU")
 
-
 def extrair_numero(texto):
     return int(texto.replace("AP", "").replace(" ", "").strip())
 
@@ -35,6 +34,7 @@ def fechar_cookies(driver):
         wait.until(
             EC.invisibility_of_element_located((By.ID, "cookiescript_buttons"))
         )
+        print("Banner de cookies fechado com sucesso.")
 
     except:
         print("Banner de cookies não apareceu ou já foi fechado.")
@@ -50,8 +50,11 @@ def verificar_popup(driver):
         if "já enviou um desafio" in texto:
             return "erro"
 
-        elif "sucesso" in texto or "enviado" in texto:
+        elif "lançou um desafio" in texto:
             return "sucesso"
+        
+        elif "desafio entre estes dois" in texto:
+            return "ip"
 
         return "outro"
 
@@ -71,6 +74,7 @@ senha = driver.find_element(By.ID, "password_connexion_mabimbo")
 senha.send_keys(senha_env)
 
 senha.submit()
+print("Login efetuado com sucesso.")
 
 fechar_cookies(driver)
 
@@ -90,10 +94,10 @@ while i < 100:
         print("Erro ao pegar AP, pulando...")
         time.sleep(2)
         continue
-
-    print(valor_stats, valor_span)
+    
 
     if valor_span > valor_stats:
+        print("Princesa elegível a desafio.")
         try:
             wait.until(EC.invisibility_of_element_located((By.ID, "notification-center")))
         except:
@@ -105,15 +109,22 @@ while i < 100:
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "#btn-challenge-without-stake > .btn"))).click()
         time.sleep(random.uniform(1, 2))
         
-        wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#notification-center p")))
+        
+        try:
+            wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#notification-center p")))
+        except:
+            pass
         
         resultado_popup = verificar_popup(driver)
 
         if resultado_popup == "erro":
-            print("Pulando princesa...")
+            print("Já desafiou anteriormente, pulando princesa...")
         elif resultado_popup == "sucesso":
             print("Desafio enviado com sucesso, passando princesa...")
             i += 1
+            print(f"Faltam {100 - i} princesas para serem desafiadas hoje.")
+        elif resultado_popup == "ip":
+            print("Essa princesa ja foi desafiada nesse mesmo IP, pulando princesa...")
         else:
             print("Popup inesperado")
             
@@ -122,11 +133,13 @@ while i < 100:
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".left img"))).click()
         
     else:
+        print("Princesa não elegível a desafio, você perderia.")
         wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".left img"))).click()
         
     time.sleep(random.uniform(2, 5))
     
     if i % 10 == 0 and i != 0:
         time.sleep(random.uniform(10, 20))
+        
 
 driver.quit()
