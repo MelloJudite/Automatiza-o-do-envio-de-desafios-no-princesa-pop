@@ -55,6 +55,9 @@ def verificar_popup(driver):
         
         elif "desafio entre estes dois" in texto:
             return "ip"
+        
+        elif "Você atingiu o limite diário" in texto:
+            return "limite"
 
         return "outro"
 
@@ -125,6 +128,9 @@ while i < 100:
             print(f"Faltam {100 - i} princesas para serem desafiadas hoje.")
         elif resultado_popup == "ip":
             print("Essa princesa ja foi desafiada nesse mesmo IP, pulando princesa...")
+        elif resultado_popup == "limite":
+            print("Você atingiu o limite diário de desafios, encerrando o programa.")
+            break
         else:
             print("Popup inesperado")
             

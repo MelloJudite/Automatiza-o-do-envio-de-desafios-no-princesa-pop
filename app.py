@@ -12,7 +12,6 @@ load_dotenv()
 email_env = os.getenv("EMAIL")
 senha_env = os.getenv("SENHA")
 
-
 def extrair_numero(texto):
     return int(texto.replace("AP", "").replace(" ", "").strip())
 
@@ -35,6 +34,7 @@ def fechar_cookies(driver):
         wait.until(
             EC.invisibility_of_element_located((By.ID, "cookiescript_buttons"))
         )
+        print("Banner de cookies fechado com sucesso.")
 
     except:
         print("Banner de cookies não apareceu ou já foi fechado.")
@@ -52,6 +52,12 @@ def verificar_popup(driver):
 
         elif "lançou um desafio" in texto:
             return "sucesso"
+        
+        elif "desafio entre estes dois" in texto:
+            return "ip"
+        
+        elif "Você atingiu o limite diário" in texto:
+            return "limite"
 
         return "outro"
 
@@ -60,7 +66,7 @@ def verificar_popup(driver):
 
 
 driver = webdriver.Firefox()
-wait = WebDriverWait(driver, 7)
+wait = WebDriverWait(driver, 15)
 
 driver.get("https://www.princesapop.com")
 
@@ -71,6 +77,7 @@ senha = driver.find_element(By.ID, "password_connexion_mabimbo")
 senha.send_keys(senha_env)
 
 senha.submit()
+print("Login efetuado com sucesso.")
 
 fechar_cookies(driver)
 
@@ -93,7 +100,7 @@ while i < 100:
     
 
     if valor_span > valor_stats:
-        print("princesa elegível a desafio, você ganharia.")
+        print("Princesa elegível a desafio.")
         try:
             wait.until(EC.invisibility_of_element_located((By.ID, "notification-center")))
         except:
@@ -108,14 +115,22 @@ while i < 100:
         
         try:
             wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#notification-center p")))
+        except:
+            pass
         
         resultado_popup = verificar_popup(driver)
 
         if resultado_popup == "erro":
             print("Já desafiou anteriormente, pulando princesa...")
         elif resultado_popup == "sucesso":
-            print("Desafio enviado com sucesso, avançando princesa...")
+            print("Desafio enviado com sucesso, passando princesa...")
             i += 1
+            print(f"Faltam {100 - i} princesas para serem desafiadas hoje.")
+        elif resultado_popup == "ip":
+            print("Essa princesa ja foi desafiada nesse mesmo IP, pulando princesa...")
+        elif resultado_popup == "limite":
+            print("Você atingiu o limite diário de desafios, encerrando o programa.")
+            break
         else:
             print("Popup inesperado")
             
@@ -131,5 +146,6 @@ while i < 100:
     
     if i % 10 == 0 and i != 0:
         time.sleep(random.uniform(10, 20))
+        
 
 driver.quit()
