@@ -147,5 +147,5 @@ while i <= 100:
     if i % 10 == 0 and i != 0:
         time.sleep(random.uniform(10, 20))
         
-
+print(f"Encerrando programa, {i} princesas desafiadas")
 driver.quit()
